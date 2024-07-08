@@ -1,12 +1,13 @@
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-label'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'sonner'
 import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
+import { z } from 'zod'
+
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 
 const signUpForm = z.object({
   email: z
@@ -76,8 +77,14 @@ export function SignUp() {
             </Button>
 
             <p className="px-6 text-center text-sm leading-relaxed text-muted-foreground">
-              Ao continuar, você concorda com nosso termos de serviço e
-              políticas de privacidade.
+              Ao continuar, você concorda com nosso{' '}
+              <a href="" className="underline underline-offset-4">
+                termos de serviço
+              </a>{' '}
+              e{' '}
+              <a href="" className="underline underline-offset-4">
+                políticas de privacidade.
+              </a>
             </p>
           </form>
         </div>
