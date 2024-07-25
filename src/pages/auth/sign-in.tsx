@@ -1,11 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-label'
+import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { signIn } from '@/api/sign-in'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
@@ -27,10 +29,14 @@ export function SignIn() {
     resolver: zodResolver(signInForm),
   })
 
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: signIn,
+  })
+
   async function handleSignIn(data: SignInForm) {
     try {
       console.log(data)
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await authenticate({ email: data.email })
       toast.success('Enviamos um link de autenticação para seu email.', {
         action: {
           label: 'Reenviar',
