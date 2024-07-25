@@ -1,20 +1,28 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Label } from '@radix-ui/react-label'
+import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
+import { registerEmporium } from '@/api/register-emporium'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 
 const signUpForm = z.object({
+  restaurantName: z
+    .string()
+    .min(1, { message: 'O nome da oficina é obrigatorio' }),
+  managerName: z
+    .string()
+    .min(1, { message: 'O nome do gerente é obrigatório' }),
   email: z
     .string()
     .min(1, { message: 'O email é obrigatório' })
     .email('O email inserido é invalido'),
-  senha: z.string().min(3, 'A senha deve ter no minimo 3 caracteres'),
+  phone: z.string().min(3, 'A senha deve ter no minimo 3 caracteres'),
 })
 
 type SignUpForm = z.infer<typeof signUpForm>
@@ -30,14 +38,22 @@ export function SignUp() {
     resolver: zodResolver(signUpForm),
   })
 
+  const { mutateAsync: registerEmporiumFn } = useMutation({
+    mutationFn: registerEmporium,
+  })
+
   async function handleSignUp(data: SignUpForm) {
     try {
-      console.log(data)
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      await registerEmporiumFn({
+        email: data.email,
+        phone: data.phone,
+        managerName: data.managerName,
+        restaurantName: data.restaurantName,
+      })
       toast.success('Cadastro realizado com sucesso', {
         action: {
           label: 'login',
-          onClick: () => navigate('/sign-in'),
+          onClick: () => navigate(`/sign-in?email=${data.email}`),
         },
       })
     } catch (error) {
@@ -64,12 +80,28 @@ export function SignUp() {
 
           <form onSubmit={handleSubmit(handleSignUp)} className="space-y-4">
             <div className="space-y-4">
+              <Label htmlFor="email">Nome do estabelecimento</Label>
+              <Input
+                id="restaurantName"
+                type="text"
+                {...register('restaurantName')}
+              />
+            </div>
+            <div className="space-y-4">
+              <Label htmlFor="email">Seu nome</Label>
+              <Input
+                id="managerName"
+                type="text"
+                {...register('managerName')}
+              />
+            </div>
+            <div className="space-y-4">
               <Label htmlFor="email">Seu e-mail</Label>
               <Input id="email" type="email" {...register('email')} />
             </div>
             <div className="space-y-4">
-              <Label htmlFor="senha">Sua senha</Label>
-              <Input id="senha" type="password" {...register('senha')} />
+              <Label htmlFor="senha">Seu telefone</Label>
+              <Input id="senha" type="password" {...register('phone')} />
             </div>
 
             <Button disabled={isSubmitting} className="w-full" type="submit">

@@ -1,6 +1,12 @@
+import { useQuery } from '@tanstack/react-query'
 import { Building, ChevronDown, LogOut } from 'lucide-react'
 
+import { getManagedEmporium } from '@/api/get-managed-emporium'
+import { getProfile } from '@/api/get-profile'
+
+import { StoreProfileDialog } from './store-profile-dialog'
 import { Button } from './ui/button'
+import { Dialog, DialogTrigger } from './ui/dialog'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,36 +15,67 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
+  const { data: profile, isLoading: isLoadingProfile } = useQuery({
+    queryKey: ['profile'], // serve para identificar unicamente uma requisição para realizar o processo de deduplicação(guardar em cache) do react-query
+    queryFn: getProfile,
+  })
+
+  const { data: managedEmporium, isLoading: isLoadingManagedEmporium } =
+    useQuery({
+      queryKey: ['managed-emporium'],
+      queryFn: getManagedEmporium,
+    })
+
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          className="flex items-center gap-2 select-none"
-        >
-          Oficina Inteligente
-          <ChevronDown className="w-4" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
-        <DropdownMenuLabel className="flex flex-col">
-          <span>Diogo Prado</span>
-          <span className="text-xs fotn-normal text-muted-foreground">
-            diogo.hsp@gmail.com
-          </span>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <Building className="w-4 -h-4 mr-2" />
-          <span>Perfil da loja</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="text-rose-500 dark:text-rose-400">
-          <LogOut className="w-4 -h-4 mr-2" />
-          <span>Sair</span>
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Dialog>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2 select-none"
+          >
+            {isLoadingManagedEmporium ? (
+              <Skeleton className="h-4 w-40" />
+            ) : (
+              managedEmporium?.name
+            )}
+            <ChevronDown className="w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel className="flex flex-col">
+            {isLoadingProfile ? (
+              <div className="space-y-1.5">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-3 w-32" />
+              </div>
+            ) : (
+              <>
+                <span>{profile?.name}</span>
+                <span className="text-xs fotn-normal text-muted-foreground">
+                  {profile?.email}
+                </span>
+              </>
+            )}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DialogTrigger asChild>
+            <DropdownMenuItem>
+              <Building className="w-4 -h-4 mr-2" />
+              <span>Perfil da loja</span>
+            </DropdownMenuItem>
+          </DialogTrigger>
+          <DropdownMenuItem className="text-rose-500 dark:text-rose-400">
+            <LogOut className="w-4 -h-4 mr-2" />
+            <span>Sair</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <StoreProfileDialog></StoreProfileDialog>
+    </Dialog>
   )
 }
