@@ -21,12 +21,14 @@ export function AccountMenu() {
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['profile'], // serve para identificar unicamente uma requisição para realizar o processo de deduplicação(guardar em cache) do react-query
     queryFn: getProfile,
+    staleTime: Infinity,
   })
 
   const { data: managedEmporium, isLoading: isLoadingManagedEmporium } =
     useQuery({
       queryKey: ['managed-emporium'],
       queryFn: getManagedEmporium,
+      staleTime: Infinity, // Infinity, fala que essa informação nunca vai ficar obsoleta
     })
 
   return (
