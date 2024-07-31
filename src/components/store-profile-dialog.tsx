@@ -1,10 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { toast } from 'sonner'
 import { z } from 'zod'
 
-import { getManagedEmporium } from '@/api/get-managed-emporium'
+import {
+  getManagedEmporium,
+  GetManagedEmporiumResponse,
+} from '@/api/get-managed-emporium'
 import { updateProfile } from '@/api/update-profile'
 
 import { Button } from './ui/button'
@@ -22,20 +25,20 @@ import { Textarea } from './ui/textarea'
 
 const storeProfileSchema = z.object({
   name: z.string().min(1),
-  description: z.string().min(1),
+  description: z.string().min(1).nullable(),
 })
 
 type StoreProfileSchema = z.infer<typeof storeProfileSchema>
 
 export function StoreProfileDialog() {
+  const queryClient = useQueryClient()
+
   const { data: managedEmporium } = useQuery({
     queryKey: ['managed-emporium'],
     queryFn: getManagedEmporium,
     staleTime: Infinity, // O react query tenta recarregar qualquer informação que seja obsoleta, e o stale time coloca um tempo para que a informação se torne obsoleta. já vem por padrão com um tempo setado
     // refetchOnWindowFocus: true //Ao tirar o foco da tela e voltar ele recarrega as informações obsoletas, por padrao já é true
   })
-
-  // console.log(managedEmporium)
 
   const {
     register,
@@ -51,8 +54,49 @@ export function StoreProfileDialog() {
     },
   })
 
+  function updateManagedEmporiumCache({
+    name,
+    description,
+  }: StoreProfileSchema) {
+    const cached = queryClient.getQueryData<GetManagedEmporiumResponse>([
+      'managed-emporium',
+    ])
+
+    if (cached) {
+      queryClient.setQueryData<GetManagedEmporiumResponse>(
+        ['managed-emporium'],
+        {
+          ...cached,
+          name,
+          description,
+        },
+      )
+    }
+
+    // retorna as informações do emporium antes de ser atualizado
+    return { cached }
+  }
+
   const { mutateAsync: updateProfileFn } = useMutation({
     mutationFn: updateProfile,
+    // Data = retorna dados retornados da query
+    // Variables = retorna os dados utilizados na query
+    // onSuccess(_, { name, description }) { }
+
+    // Diferente do succes, o onMutate dispara assim que eu clico no botão de salvar e não apenas no sucesso
+    onMutate: ({ name, description }) => {
+      const { cached } = updateManagedEmporiumCache({ name, description })
+      return { previousProfile: cached }
+    },
+
+    // Error = detalhes do erro
+    // Variables = as variaveis que eu enviei na hora da requisição
+    // Context = são informações que eu consigo compartilhar entre o contexto de uma mutação ou query (tudo que eu retorno em um mutate é adicionado ao contexto)
+    onError(_, __, context) {
+      if (context?.previousProfile) {
+        updateManagedEmporiumCache(context.previousProfile)
+      }
+    },
   })
 
   async function handleUpdateProfile(data: StoreProfileSchema) {

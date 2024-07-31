@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-interface GetManagedEmporiumResponse {
+export interface GetManagedEmporiumResponse {
   id: string
   name: string
   createdAt: Date | null
