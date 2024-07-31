@@ -1,8 +1,10 @@
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { Building, ChevronDown, LogOut } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 import { getManagedEmporium } from '@/api/get-managed-emporium'
 import { getProfile } from '@/api/get-profile'
+import { signOut } from '@/api/sign-out'
 
 import { StoreProfileDialog } from './store-profile-dialog'
 import { Button } from './ui/button'
@@ -18,6 +20,8 @@ import {
 import { Skeleton } from './ui/skeleton'
 
 export function AccountMenu() {
+  const navigate = useNavigate()
+
   const { data: profile, isLoading: isLoadingProfile } = useQuery({
     queryKey: ['profile'], // serve para identificar unicamente uma requisição para realizar o processo de deduplicação(guardar em cache) do react-query
     queryFn: getProfile,
@@ -30,6 +34,14 @@ export function AccountMenu() {
       queryFn: getManagedEmporium,
       staleTime: Infinity, // Infinity, fala que essa informação nunca vai ficar obsoleta
     })
+
+  const { mutateAsync: signOutFn, isPending: isSigningOut } = useMutation({
+    mutationFn: signOut,
+    onSuccess: () => {
+      navigate('/sign-in', { replace: true })
+      // replace substitui a rota ao inves de enviar o usuario para um nova rota, isso impede ele de usar o botao de voltar do navegador
+    },
+  })
 
   return (
     <Dialog>
@@ -70,9 +82,15 @@ export function AccountMenu() {
               <span>Perfil da loja</span>
             </DropdownMenuItem>
           </DialogTrigger>
-          <DropdownMenuItem className="text-rose-500 dark:text-rose-400">
-            <LogOut className="w-4 -h-4 mr-2" />
-            <span>Sair</span>
+          <DropdownMenuItem
+            asChild
+            disabled={isSigningOut}
+            className="text-rose-500 dark:text-rose-400"
+          >
+            <button className="w-full" onClick={() => signOutFn()}>
+              <LogOut className="w-4 -h-4 mr-2" />
+              <span>Sair</span>
+            </button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
