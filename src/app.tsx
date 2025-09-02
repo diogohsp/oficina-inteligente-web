@@ -13,7 +13,7 @@ export function App() {
   return (
     <HelmetProvider>
       <ThemeProvider defaultTheme="system" storageKey="oficina-theme">
-        <Helmet titleTemplate="%s | Oficina.Inteligente" />
+        <Helmet titleTemplate="%s | Next.Educação" />
         <Toaster richColors />
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />

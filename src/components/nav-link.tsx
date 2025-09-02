@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { ComponentProps } from 'react'
+// import { ComponentProps } from 'react'
 import { Link, LinkProps, useLocation } from 'react-router-dom'
 
 export type NaviLinksProps = LinkProps

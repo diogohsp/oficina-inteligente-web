@@ -1,76 +1,97 @@
 @tailwind base;
-  @tailwind components;
-  @tailwind utilities;
+@tailwind components;
+@tailwind utilities;
 
-  @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 240 10% 3.9%;
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
 
-      --primary: 240 5.9% 10%;
-      --primary-foreground: 0 0% 98%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
 
-      --secondary: 240 4.8% 95.9%;
-      --secondary-foreground: 240 5.9% 10%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
 
-      --muted: 240 4.8% 95.9%;
-      --muted-foreground: 240 3.8% 46.1%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
 
-      --accent: 240 4.8% 95.9%;
-      --accent-foreground: 240 5.9% 10%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 0 0% 98%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
 
-      --border: 240 5.9% 90%;
-      --input: 240 5.9% 90%;
-      --ring: 240 10% 3.9%;
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
 
-      --radius: 0.5rem;
-    }
-
-    .dark {
-      --background: 240 10% 3.9%;
-      --foreground: 0 0% 98%;
-
-      --card: 240 10% 3.9%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 240 10% 3.9%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 0 0% 98%;
-      --primary-foreground: 240 5.9% 10%;
-
-      --secondary: 240 3.7% 15.9%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 240 3.7% 15.9%;
-      --muted-foreground: 240 5% 64.9%;
-
-      --accent: 240 3.7% 15.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 240 3.7% 15.9%;
-      --input: 240 3.7% 15.9%;
-      --ring: 240 4.9% 83.9%;
-    }
+    --radius: 0.5rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .dark {
+    --background: 220 60% 22%; /* Azul infantil de fundo */
+    --foreground: 210 80% 95%; /* Azul claro para texto */
+
+    --card: 220 70% 28%; /* Card azul mais vibrante */
+    --card-foreground: 210 80% 95%;
+
+    --popover: 220 60% 25%;
+    --popover-foreground: 210 80% 95%;
+
+    --primary: 200 90% 60%; /* Azul bebê para botões/destaques */
+    --primary-foreground: 220 60% 22%;
+
+    --secondary: 280 70% 70%; /* Lilás suave para detalhes */
+    --secondary-foreground: 210 80% 95%;
+
+    --muted: 180 60% 85%; /* Verde água suave para áreas neutras */
+    --muted-foreground: 210 40% 70%;
+
+    --accent: 40 90% 60%; /* Laranja pastel para chamar atenção */
+    --accent-foreground: 220 60% 22%;
+
+    --destructive: 0 80% 60%; /* Vermelho suave */
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 220 40% 30%;
+    --input: 220 40% 30%;
+    --ring: 200 90% 60%;
   }
+}
+
+@layer base {
+  html,
+  body {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    touch-action: manipulation;
+    overscroll-behavior: none;
+    /* Removido overflow: hidden para permitir scroll nas páginas de matérias e home */
+    height: 100%;
+  }
+  * {
+    @apply border-border;
+    user-select: none;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@media (max-width: 10000px) {
+  html {
+    touch-action: manipulation;
+    overscroll-behavior: none;
+    /* Removido overflow: hidden para permitir scroll nas páginas de matérias e home */
+    height: 100%;
+  }
+}
